@@ -1,6 +1,9 @@
 module TestImport
     ( withApp
     , runDB
+    , runDBWithPool
+    , wipeDBPool
+    , getAppSettings
     , authenticateAs
     , times
     , module X
@@ -9,7 +12,7 @@ module TestImport
 import Application           (makeFoundation, withEnv)
 import ClassyPrelude         as X
 import Database.Persist      as X hiding (get)
-import Database.Persist.Sql  (SqlPersistM, SqlBackend, runSqlPersistMPool, rawExecute, rawSql, unSingle, connEscapeName)
+import Database.Persist.Sql  (ConnectionPool, SqlPersistM, SqlBackend, runSqlPersistMPool, rawExecute, rawSql, unSingle, connEscapeName)
 import Foundation            as X
 import Model                 as X
 import Test.Hspec            as X hiding
@@ -34,31 +37,38 @@ runDB query = do
     liftIO $ runDBWithApp app query
 
 runDBWithApp :: App -> SqlPersistM a -> IO a
-runDBWithApp app query = runSqlPersistMPool query (appConnPool app)
+runDBWithApp app query = runDBWithPool (appConnPool app) query
 
+runDBWithPool :: ConnectionPool -> SqlPersistM a -> IO a
+runDBWithPool pool query = runSqlPersistMPool query pool
 
 withApp :: SpecWith App -> Spec
 withApp = before $ do
-    settings <- loadAppSettings
-        ["config/test-settings.yml", "config/settings.yml"]
-        []
-        ignoreEnv
+    settings <- getAppSettings
     foundation <- withEnv $ makeFoundation settings
     wipeDB foundation
     return foundation
+
+getAppSettings :: IO AppSettings
+getAppSettings = loadAppSettings
+    ["config/test-settings.yml", "config/settings.yml"]
+    []
+    ignoreEnv
 
 -- This function will truncate all of the tables in your database.
 -- 'withApp' calls it before each test, creating a clean environment for each
 -- spec to run in.
 wipeDB :: App -> IO ()
-wipeDB app = do
-    runDBWithApp app $ do
-        tables <- getTables
-        sqlBackend <- ask
+wipeDB = wipeDBPool . appConnPool
 
-        let escapedTables = map (connEscapeName sqlBackend . DBName) tables
-            query = "TRUNCATE TABLE " ++ (intercalate ", " escapedTables)
-        rawExecute query []
+wipeDBPool :: ConnectionPool -> IO ()
+wipeDBPool pool = runDBWithPool pool $ do
+    tables <- getTables
+    sqlBackend <- ask
+
+    let escapedTables = map (connEscapeName sqlBackend . DBName) tables
+        query = "TRUNCATE TABLE " ++ (intercalate ", " escapedTables)
+    rawExecute query []
 
 getTables :: MonadIO m => ReaderT SqlBackend m [Text]
 getTables = do

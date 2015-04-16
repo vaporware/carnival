@@ -191,6 +191,7 @@ test-suite test
                  , case-insensitive
                  , containers
                  , hspec-expectations-lifted
+                 , hspec-webdriver
                  , http-types
                  , markdown
                  , mime-mail
