@@ -17,4 +17,4 @@ test:
     - ./bin/setup-selenium
     - /app/halcyon/halcyon paths > halcyon-env
     - . halcyon-env && yesod test
-    - bin/integration
+    - . halcyon-env && bin/integration
