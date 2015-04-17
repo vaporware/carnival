@@ -146,6 +146,64 @@ executable         carnival
 
     ghc-options:       -threaded -O2 -rtsopts -with-rtsopts=-N
 
+executable carnival-integration
+    main-is:           Integration.hs
+    hs-source-dirs:    test
+    ghc-options:       -Wall
+
+    extensions: TemplateHaskell
+                QuasiQuotes
+                OverloadedStrings
+                NoImplicitPrelude
+                CPP
+                MultiParamTypeClasses
+                TypeFamilies
+                GADTs
+                GeneralizedNewtypeDeriving
+                FlexibleContexts
+                EmptyDataDecls
+                NoMonomorphismRestriction
+                DeriveDataTypeable
+                ViewPatterns
+                TupleSections
+
+                FlexibleInstances
+                RankNTypes
+                StandaloneDeriving
+
+    build-depends: base
+                 , carnival
+                 , yesod-test >= 1.4.3 && < 1.5
+                 , yesod-core
+                 , yesod
+                 , persistent
+                 , persistent-postgresql
+                 , resourcet
+                 , monad-logger
+                 , transformers
+                 , hspec >= 2.0.0
+                 , classy-prelude
+                 , classy-prelude-yesod
+
+                 , aeson
+                 , bytestring
+                 , case-insensitive
+                 , containers
+                 , hspec-expectations-lifted
+                 , hspec-webdriver
+                 , http-types
+                 , markdown
+                 , mime-mail
+                 , mtl
+                 , shakespeare
+                 , shakespeare-text
+                 , stripe-haskell
+                 , text
+                 , time
+                 , wai-extra
+                 , webdriver
+                 , yesod-auth
+
 test-suite test
     type:              exitcode-stdio-1.0
     main-is:           Spec.hs

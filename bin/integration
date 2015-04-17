@@ -8,7 +8,10 @@ java_pid=$!
 dist/build/carnival/carnival config/test-settings.yml &
 carnival_pid=$!
 
-echo ':main' | cabal exec -- ghci -itest -Wall IntegrationSpec.hs
+cabal run carnival-integration
+status=$?
 
 kill $java_pid
 kill $carnival_pid
+
+exit $status
