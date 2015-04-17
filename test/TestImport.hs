@@ -50,7 +50,7 @@ withApp = before $ do
     return foundation
 
 getAppSettings :: IO AppSettings
-getAppSettings = loadAppSettings
+getAppSettings = withEnv $ loadAppSettings
     ["config/test-settings.yml", "config/settings.yml"]
     []
     ignoreEnv
