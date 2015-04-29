@@ -9,10 +9,10 @@ module IntegrationImport
     ) where
 
 import ClassyPrelude as X hiding (Element)
-import TestImport as X (getAppSettings, wipeDBPool)
 import Test.Hspec.WebDriver as X hiding (shouldBe, shouldReturn)
 
 import Settings
+import TestImport (getAppSettings, wipeDBPool)
 import Test.WebDriver.Class
 import Test.WebDriver.Commands.Wait
 

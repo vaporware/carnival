@@ -1,5 +1,6 @@
 module Main where
 
+import TestImport
 import IntegrationImport
 
 main :: IO ()
