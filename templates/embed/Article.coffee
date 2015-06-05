@@ -7,7 +7,7 @@ class Article
     @thread = new Thread(this)
     @fetchComments()
     @bindEvents()
-    @element.style.position = 'relative'
+    @bootstrapStyles()
 
   createBlocks: ->
     @blocks = [].slice.call(@element.querySelectorAll(CarnivalOptions.block_selector)).map (blockElement, index) =>
@@ -57,3 +57,12 @@ class Article
 
   wideScreen: =>
     window.matchMedia('only screen and (min-width: 640px)').matches
+
+  bootstrapStyles: ->
+    @element.style.position = 'relative'
+
+    currentLeft = parseInt(@element.style.left)
+    unless currentLeft
+      @element.style.left = '0'
+
+    @element.style.transition = 'left 0.25s'
